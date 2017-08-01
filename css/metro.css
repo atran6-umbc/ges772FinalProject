@@ -15,20 +15,28 @@ html, body, #container, #map {
 	height: 100%;
 }
 
-#results {
-  height: 100%;
-  border: 1px solid #ddd;
-  overflow: hidden;
+#map-title {
+  padding-left: 50%;
+  font-family: Helvetica;
+  font-weight: bold;
+  font-size: 26px;
+
 }
 
 #right-panel-top {
   height: 40vh;
   overflow: hidden;
-  padding: 0.25em;
+  padding: 1em;
+  border-bottom: 1px solid red;
 }
 
 #right-panel-bottom {
   height: 60vh;
   overflow: hidden;
   padding: 0.25em;
+}
+
+.menu-label {
+  font-family: verdana;
+  font-weight: bold;
 }
