@@ -1,0 +1,34 @@
+body {
+    padding: 20;
+    margin: 0;
+    overflow: hidden;
+}
+
+#container{
+  overflow:hidden;
+  padding-left: 15px;
+  padding-right: 15px;
+  padding-bottom: 48px;
+}
+
+html, body, #container, #map {
+	height: 100%;
+}
+
+#results {
+  height: 100%;
+  border: 1px solid #ddd;
+  overflow: hidden;
+}
+
+#right-panel-top {
+  height: 40vh;
+  overflow: hidden;
+  padding: 0.25em;
+}
+
+#right-panel-bottom {
+  height: 60vh;
+  overflow: hidden;
+  padding: 0.25em;
+}
