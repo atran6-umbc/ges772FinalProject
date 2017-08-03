@@ -25,14 +25,14 @@ html, body, #container, #map {
 
 #right-panel-top {
   height: 40vh;
-  overflow: hidden;
+  overflow-y: scroll;
   padding: 1em;
   border-bottom: 1px solid red;
 }
 
 #right-panel-bottom {
   height: 60vh;
-  overflow: hidden;
+  overflow: scroll;
   padding: 0.25em;
 }
 
