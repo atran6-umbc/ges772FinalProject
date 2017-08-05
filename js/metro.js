@@ -1,33 +1,27 @@
 window.onload = function(){
 
+// set wmata api key.
+// temp key can be get at https://developer.wmata.com/Products
+var wmata_api_key = 'e1eee2b5677f408da40af8480a5fd5a8';
+
 //initialize and load map
 var map = L.map('map', {
     center: [38.9072, -77.0369],
     zoom: 13
 });
 
+// initialize base map
 L.tileLayer('http://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
     maxZoom: 19,
     attribution: '&copy; <a href="http://www.openstreetmap.org/copyright">OpenStreetMap</a>'
 }).addTo(map);
 
-// initialize station and entrance layer styles
-var stationMarkerOptions = {
-    icon: L.icon({iconUrl: 'js/images/station-icon.png', iconSize: [15, 15]}),
-    title: 'Metro Station'
-};
-
-var entranceMarkerOptions = {
-    icon: L.icon({iconUrl: 'js/images/entrance-icon.png', iconSize: [30, 30]}),
-    title: 'Metro Station Entrance'
-};
-
-// define station and entrance layer behavior
+// initialize geojson layers
 var stations = L.geoJSON(null, {
     pointToLayer: function (feature, latlng) {
-        return L.marker(latlng, stationMarkerOptions).on('click', function(){
+        return L.marker(latlng, {icon: L.icon({iconUrl: 'js/images/station-icon.png', iconSize: [15, 15]}), title: feature.properties.NAME}).on('click', function(){
             let stationCode = feature.properties.CODE;
-            
+
             // load station info
             $.getJSON('http://192.168.1.165:8080/geoserver/ges772/ows?service=WFS&version=1.0.0&request=GetFeature&typeName=ges772:MetroStations4326&outputFormat=application/json&cql_filter=CODE=%27'+stationCode+'%27',function (data){
                 let stationCode = data.features[0].properties.CODE
@@ -46,39 +40,64 @@ var stations = L.geoJSON(null, {
                     </div>
                 </div>
                 `
+                // load station details
                 $('#right-panel-bottom').html(stationDetails);
 
+                // load station entrances
+                $('#entrance-btn').unbind().click(function(){
+                    let qryURL = 'http://192.168.1.165:8080/geoserver/ges772/ows?service=WFS&version=1.0.0&request=GetFeature&typeName=ges772:MetroStationEntrances4326&outputFormat=application/json&cql_filter=CODE=\''+stationCode+'\'';
+                    $.getJSON(qryURL, function(data){
+                        stationEntrances.clearLayers();
+                        stationEntrances.addData(data);
+                        map.fitBounds(stationEntrances.getBounds());
+                    });
+                });
+
+                // get next-train times
+                $('#next-train-btn').unbind().click(function(){
+                    /*
+                    $.ajax({
+                        beforeSend: function(request) {
+                        request.setRequestHeader("api_Key", wmata_api_key);
+                    },
+                    dataType: "json",
+                    url: 'https://api.wmata.com/Rail.svc/json/jStationInfo?StationCode='+stationCode,
+                    success: function(data) {
+
+                    }
+                    });
+                    */
+                });
+
+                // get station parking details
+                $('#parking-details-btn').unbind().click(function(){
+
+                });
+
+                // get station incidents
+                $('#incidents-btn').unbind().click(function(){
+
+                });
+
             });
-
-            // set wmata api key.
-            // temp key can be get at https://developer.wmata.com/Products
-            let wmata_api_key = 'e1eee2b5677f408da40af8480a5fd5a8';
-
-            /*
-            $.ajax({
-                beforeSend: function(request) {
-                request.setRequestHeader("api_Key", wmata_api_key);
-            },
-            dataType: "json",
-            url: 'https://api.wmata.com/Rail.svc/json/jStationInfo?StationCode='+stationCode,
-            success: function(data) {
-
-            }
-            });
-            */
         });
     }
 }).addTo(map);
 
 var stationEntrances = L.geoJSON(null, {
     pointToLayer: function (feature, latlng) {
-        return L.marker(latlng, entranceMarkerOptions);
+        return L.marker(latlng, {icon: L.icon({iconUrl: 'js/images/entrance-icon.png', iconSize: [30, 30]}), title: feature.properties.NAME}).bindPopup(`
+            <text class=menu-label>Name: </text>${feature.properties.NAME}<br>
+            <text class=menu-label>Address: </text>${feature.properties.ADDRESS}<br>
+            <text class=menu-label>Exit To: </text>${feature.properties.EXIT_TO_ST}<br>
+            <text class=menu-label>Metro Line: </text>${feature.properties.LINE}
+            `);
     }
 }).addTo(map);
 
 loadSearchMenu();
 
-// alod the faceted search menu
+// load the faceted search menu
 function loadSearchMenu(){
     // load search menu
     let mainForm = `<form id=search-form>
