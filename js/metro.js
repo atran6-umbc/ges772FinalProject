@@ -26,8 +26,46 @@ var entranceMarkerOptions = {
 var stations = L.geoJSON(null, {
     pointToLayer: function (feature, latlng) {
         return L.marker(latlng, stationMarkerOptions).on('click', function(){
-            // TODO load station details into right-panel bottom
-            // by making request to WMATA API
+            let stationCode = feature.properties.CODE;
+            
+            // load station info
+            $.getJSON('http://192.168.1.165:8080/geoserver/ges772/ows?service=WFS&version=1.0.0&request=GetFeature&typeName=ges772:MetroStations4326&outputFormat=application/json&cql_filter=CODE=%27'+stationCode+'%27',function (data){
+                let stationCode = data.features[0].properties.CODE
+                let stationName = data.features[0].properties.NAME;
+                let stationAddress = data.features[0].properties.ADDRESS;
+                let stationLines = data.features[0].properties.MetroLine;
+
+                let stationDetails = `
+                <div id=station-details>
+                    <p><text class=menu-label>Station Code: </text>${stationCode}</p>
+                    <p><text class=menu-label>Station Name: </text>${stationName}</p>
+                    <p><text class=menu-label>Station Address: </text>${stationAddress}</p>
+                    <p><text class=menu-label>Operating Lines: </text>${stationLines}</p>
+                    <div id=station-details-submenu>
+                        <button id=entrance-btn>Station Entrance</button><button id=next-train-btn>Next Train</button><button id=parking-details-btn>Parking Info</button><button id=incidents-btn>Incidents</button>
+                    </div>
+                </div>
+                `
+                $('#right-panel-bottom').html(stationDetails);
+
+            });
+
+            // set wmata api key.
+            // temp key can be get at https://developer.wmata.com/Products
+            let wmata_api_key = 'e1eee2b5677f408da40af8480a5fd5a8';
+
+            /*
+            $.ajax({
+                beforeSend: function(request) {
+                request.setRequestHeader("api_Key", wmata_api_key);
+            },
+            dataType: "json",
+            url: 'https://api.wmata.com/Rail.svc/json/jStationInfo?StationCode='+stationCode,
+            success: function(data) {
+
+            }
+            });
+            */
         });
     }
 }).addTo(map);
@@ -111,7 +149,6 @@ function getNearestStation(){
 
     // NEED TO FIGURE OUT WHY THIS EVENT IS FIRING i TIMES ON THE ith CLICK OF THE SEARCH BUTTON
     loc.on('locationfound', function(location){
-        console.log(location);
         let userlat = location.latitude;
         let userlon = location.longitude;
         let qryURL = 'http://192.168.1.165:8080/geoserver/ges772/ows?service=WFS&version=1.0.0&request=GetFeature&typeName=ges772:MetroStations4326&cql_filter=DWITHIN(the_geom,Point('+userlon+' '+userlat+'),'+searchDistanceDegrees+',statute miles)&outputFormat=application/json';
