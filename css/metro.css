@@ -20,20 +20,21 @@ html, body, #container, #map {
   font-family: Helvetica;
   font-weight: bold;
   font-size: 26px;
-
+  border-bottom: 1px solid #1EBDAC;
 }
 
 #right-panel-top {
   height: 40vh;
   overflow-y: scroll;
   padding: 1em;
-  border-bottom: 1px solid red;
+  border: 1px solid #1EBDAC;
 }
 
 #right-panel-bottom {
   height: 60vh;
   overflow: scroll;
   padding: 0.25em;
+  border: 1px solid #1EBDAC;
 }
 
 .menu-label {
