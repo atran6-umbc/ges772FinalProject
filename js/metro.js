@@ -39,7 +39,7 @@ var stations = L.geoJSON(null, {
                         <button id=entrance-btn>Station Entrance</button><button id=next-train-btn>Next Train</button><button id=parking-details-btn>Parking Info</button><button id=incidents-btn>Incidents</button>
                     </div>
                     <br>
-                    <div id=train-predictions></div>
+                    <div id=station-query-output></div>
                 </div>
                 `
                 // load station details
@@ -65,12 +65,12 @@ var stations = L.geoJSON(null, {
                     url: 'https://api.wmata.com/StationPrediction.svc/json/GetPrediction/{StationCodes}?StationCode='+stationCode,
                     success: function(data) {
                         if (data.Trains.length === 0){
-                            alert('No predictions available for this station.');
+                            alert('No train arrival predictions currently available for this station.');
                         } else {
                             // clear any current train predictions
-                            $('#train-predictions').empty()
+                            $('#station-query-output').empty()
                             // load most current train predictions
-                            $('#train-predictions').append('<table id=train-prediction-tbl><tr><th>Destination</th><th>Line</th><th>ETA</th></tr></table>');
+                            $('#station-query-output').append('<table id=train-prediction-tbl><tr><th>Destination</th><th>Line</th><th>ETA</th></tr></table>');
                             for (let i=0; i<data.Trains.length; i++){
                                 let destination = data.Trains[i].DestinationName;
                                 let eta = data.Trains[i].Min;
@@ -85,7 +85,37 @@ var stations = L.geoJSON(null, {
 
                 // get station parking details
                 $('#parking-details-btn').unbind().click(function(){
-
+                    $.ajax({
+                        beforeSend: function(request) {
+                        request.setRequestHeader("api_Key", wmata_api_key);
+                    },
+                    dataType: "json",
+                    url: 'https://api.wmata.com/Rail.svc/json/jStationParking?StationCode='+stationCode,
+                    success: function(data) {
+                        if (data.StationsParking.length === 0){
+                            alert('No parking information available for this station.');
+                        } else {
+                            // clear any current train predictions
+                            $('#station-query-output').empty()
+                            // load most current train predictions
+                            let stationNotes = data.StationsParking[0].Notes;
+                            let spaceAllDay = data.StationsParking[0].AllDayParking.TotalCount;
+                            let spaceShortTerm = data.StationsParking[0].ShortTermParking.TotalCount;
+                            let costRider = data.StationsParking[0].AllDayParking.RiderCost;
+                            let nonRiderCost = data.StationsParking[0].AllDayParking.NonRiderCost;
+                            let nonRiderNotes = data.StationsParking[0].ShortTermParking.Notes;
+                            $('#station-query-output').append(`
+                                <table>
+                                    <tr><th></th><th>All Day</th><th>Short Term</th></tr>
+                                    <tr><td>Total Parking Spaces</td><td>${spaceAllDay}</td><td>${spaceShortTerm}</td></tr>
+                                    <tr><th></th><th>Rider</th><th>Non-Rider</th></tr>
+                                    <tr><td>All Day Price</td><td>$ ${costRider}</td><td>$ ${nonRiderCost}</td></tr>
+                                </table>
+                                <text class=menu-label>Station Parking Notes: </text>${stationNotes}<br>
+                                <text class=menu-label>Non-Rider Parking Notes: </text>${nonRiderNotes}`);
+                        }
+                    }
+                    });
                 });
 
                 // get station incidents
@@ -100,7 +130,7 @@ var stations = L.geoJSON(null, {
 
 var stationEntrances = L.geoJSON(null, {
     pointToLayer: function (feature, latlng) {
-        return L.marker(latlng, {icon: L.icon({iconUrl: 'js/images/entrance-icon.png', iconSize: [30, 30]}), title: feature.properties.NAME}).bindPopup(`
+        return L.marker(latlng, {icon: L.icon({iconUrl: 'js/images/entrance-icon.png', iconSize: [15, 15]}), title: feature.properties.NAME}).bindPopup(`
             <text class=menu-label>Name: </text>${feature.properties.NAME}<br>
             <text class=menu-label>Address: </text>${feature.properties.ADDRESS}<br>
             <text class=menu-label>Exit To: </text>${feature.properties.EXIT_TO_ST}<br>
@@ -166,6 +196,7 @@ function getAllStations(){
     // load new features returned by latest request
     $.getJSON(qryURL, function(data){
         stations.clearLayers();
+        stationEntrances.clearLayers();
         stations.addData(data);
         map.fitBounds(stations.getBounds());
         $('#right-panel-bottom').html('Result: '+data.totalFeatures+' stations found.');
@@ -190,6 +221,7 @@ function getNearestStation(){
         $.getJSON(qryURL, function(data){
             if (data.totalFeatures>0){
                 stations.clearLayers();
+                stationEntrances.clearLayers();
                 stations.addData(data);
                 map.fitBounds(stations.getBounds());
                 // TODO list station names in right pannel bottom
@@ -221,6 +253,7 @@ function getFacetedStations(){
     $.getJSON(qryURL, function(data){
         if (data.totalFeatures > 0){
             stations.clearLayers();
+            stationEntrances.clearLayers();
             stations.addData(data);
             map.fitBounds(stations.getBounds());
             $('#right-panel-bottom').html('Result: '+data.totalFeatures+' stations found.');
