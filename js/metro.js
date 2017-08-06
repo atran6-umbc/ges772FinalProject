@@ -95,9 +95,9 @@ var stations = L.geoJSON(null, {
                         if (data.StationsParking.length === 0){
                             alert('No parking information available for this station.');
                         } else {
-                            // clear any current train predictions
+                            // clear any current query outputs
                             $('#station-query-output').empty()
-                            // load most current train predictions
+                            // load most current query outputs
                             let stationNotes = data.StationsParking[0].Notes;
                             let spaceAllDay = data.StationsParking[0].AllDayParking.TotalCount;
                             let spaceShortTerm = data.StationsParking[0].ShortTermParking.TotalCount;
@@ -120,7 +120,30 @@ var stations = L.geoJSON(null, {
 
                 // get station incidents
                 $('#incidents-btn').unbind().click(function(){
+                    $.ajax({
+                        beforeSend: function(request) {
+                        request.setRequestHeader("api_Key", wmata_api_key);
+                    },
+                    dataType: "json",
+                    url: 'https://api.wmata.com/Incidents.svc/json/Incidents',
+                    success: function(data) {
+                        if (data.Incidents.length === 0){
+                            alert('No parking information available for this station.');
+                        } else {
+                            // clear any current query outputs
+                            $('#station-query-output').empty()
 
+                            $('#station-query-output').append('<table id=incidents-tbl><tr><th>Incident</th><th>Description</th><th>Lines Affected</th></tr></table>');
+                            // load most current query outputs
+                            for (let i=0; i<data.Incidents.length; i++){
+                                let incidentDescription = data.Incidents[i].Description;
+                                let incidentLines = data.Incidents[i].LinesAffected;
+                                let incidentType = data.Incidents[i].IncidentType;
+                                $('#incidents-tbl').append(`<tr><td>${incidentType}</td><td>${incidentDescription}</td><td>${incidentLines}</td></tr>`);
+                            }
+                        }
+                    }
+                    });
                 });
 
             });
