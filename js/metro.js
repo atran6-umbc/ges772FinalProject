@@ -36,7 +36,7 @@ var stations = L.geoJSON(null, {
                     <p><text class=menu-label>Station Address: </text>${stationAddress}</p>
                     <p><text class=menu-label>Operating Lines: </text>${stationLines}</p>
                     <div id=station-details-submenu>
-                        <button id=entrance-btn>Station Entrance</button><button id=next-train-btn>Next Train</button><button id=parking-details-btn>Parking Info</button><button id=incidents-btn>Incidents</button>
+                        <button type="button" id=entrance-btn title="Station Entrance Locations">Station Entrance</button><button type="button" id=next-train-btn title="Train Arrival Times">Next Train</button><button type="button" id=parking-details-btn title="Parking Information">Parking Info</button><button type="button" id=incidents-btn "System Incidents">Incidents</button><button type="button" id=trip-calc-btn title="Estimate Trip From This Station">Trip Calculator</button>
                     </div>
                     <br>
                     <div id=station-query-output></div>
@@ -70,13 +70,13 @@ var stations = L.geoJSON(null, {
                             // clear any current train predictions
                             $('#station-query-output').empty()
                             // load most current train predictions
-                            $('#station-query-output').append('<table id=train-prediction-tbl><tr><th>Destination</th><th>Line</th><th>ETA</th></tr></table>');
+                            $('#station-query-output').append('<table id=time-tbl><tr><th>Destination</th><th>Line</th><th>ETA</th></tr></table>');
                             for (let i=0; i<data.Trains.length; i++){
                                 let destination = data.Trains[i].DestinationName;
                                 let eta = data.Trains[i].Min;
                                 let line = data.Trains[i].Line;
                                 let row = `<tr><td>${destination}</td><td>${line}</td><td>${eta}</td></tr>`;
-                                $('#train-prediction-tbl').append(row);
+                                $('#time-tbl').append(row);
                             }
                         }
                     }
@@ -105,7 +105,7 @@ var stations = L.geoJSON(null, {
                             let nonRiderCost = data.StationsParking[0].AllDayParking.NonRiderCost;
                             let nonRiderNotes = data.StationsParking[0].ShortTermParking.Notes;
                             $('#station-query-output').append(`
-                                <table>
+                                <table id=parking-tbl>
                                     <tr><th></th><th>All Day</th><th>Short Term</th></tr>
                                     <tr><td>Total Parking Spaces</td><td>${spaceAllDay}</td><td>${spaceShortTerm}</td></tr>
                                     <tr><th></th><th>Rider</th><th>Non-Rider</th></tr>
@@ -143,6 +143,58 @@ var stations = L.geoJSON(null, {
                             }
                         }
                     }
+                    });
+                });
+
+                // get trip fare estimates
+                $('#trip-calc-btn').unbind().click(function(){
+                    let qryURL = 'http://192.168.1.165:8080/geoserver/ges772/ows?service=WFS&version=1.0.0&request=GetFeature&typeName=ges772:MetroStations4326&propertyName=NAME,CODE&outputFormat=application/json'
+                    
+                    $.getJSON(qryURL, function(data){
+                        $('#station-query-output').empty();
+                        $('#station-query-output').append(`
+                            <text class=menu-label>Destination Station:</text>
+                            <br>
+                            <select id=select-station-options>
+                            </select>
+                            `);
+                        // load stations for for destination option
+                        for (let i=0; i< data.features.length; i++){
+                            let name = data.features[i].properties.NAME;
+                            let code = data.features[i].properties.CODE;
+                            let option = `<option value="${code}">${name}</option>`;
+                            $('#select-station-options').append(option);
+                        }
+
+                        $('#select-station-options').bind('change', function(){
+                            let selection = $('#select-station-options').val();
+                            $.ajax({
+                                beforeSend: function(request) {
+                                    request.setRequestHeader("api_Key", wmata_api_key);
+                                },
+                                dataType: "json",
+                                url: `https://api.wmata.com/Rail.svc/json/jSrcStationToDstStationInfo?FromStationCode=${stationCode}&ToStationCode=${selection}`,
+                                success: function(data) {
+                                    let distance = data.StationToStationInfos[0].CompositeMiles;
+                                    let travelTime = data.StationToStationInfos[0].RailTime;
+                                    let offPeakFare = data.StationToStationInfos[0].RailFare.OffPeakTime;
+                                    let peakFare = data.StationToStationInfos[0].RailFare.PeakTime;
+                                    let seniorDisabledFare = data.StationToStationInfos[0].RailFare.SeniorDisabled;
+                                    let tripDetail = `
+                                    <br><br>
+                                    <table id=trip-tbl>
+                                        <tr><th>Estimated Travel Time</th><th>Distance</th><th></th></tr>
+                                        <tr><td>${travelTime} Min</td><td>${distance} Miles</td><td></td><tr>
+                                        <tr><th>Off Peak Fare</th><th>Peak Fare</th><th>Senior-Disabled Fare<th></tr>
+                                        <tr><td>$ ${offPeakFare}</td><td>$ ${peakFare}</td><td>$ ${seniorDisabledFare}</td></tr>
+                                    </table>
+                                    `;
+
+                                    $('#trip-tbl').remove();
+                                    $('#station-query-output').append(tripDetail);
+                                }
+                            });
+                        });
                     });
                 });
 
