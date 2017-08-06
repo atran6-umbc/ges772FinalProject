@@ -41,3 +41,16 @@ html, body, #container, #map {
   font-family: verdana;
   font-weight: bold;
 }
+
+table {
+  width: 100%;
+  font-family: Helvetica;
+  color: yellow;
+  border-collapse: collapse;
+}
+
+th, td {
+  padding: 15px;
+  border-bottom: 1px solid yellow;
+  background-color: #000000;
+}

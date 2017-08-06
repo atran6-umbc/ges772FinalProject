@@ -38,6 +38,8 @@ var stations = L.geoJSON(null, {
                     <div id=station-details-submenu>
                         <button id=entrance-btn>Station Entrance</button><button id=next-train-btn>Next Train</button><button id=parking-details-btn>Parking Info</button><button id=incidents-btn>Incidents</button>
                     </div>
+                    <br>
+                    <div id=train-predictions></div>
                 </div>
                 `
                 // load station details
@@ -55,18 +57,30 @@ var stations = L.geoJSON(null, {
 
                 // get next-train times
                 $('#next-train-btn').unbind().click(function(){
-                    /*
                     $.ajax({
                         beforeSend: function(request) {
                         request.setRequestHeader("api_Key", wmata_api_key);
                     },
                     dataType: "json",
-                    url: 'https://api.wmata.com/Rail.svc/json/jStationInfo?StationCode='+stationCode,
+                    url: 'https://api.wmata.com/StationPrediction.svc/json/GetPrediction/{StationCodes}?StationCode='+stationCode,
                     success: function(data) {
-
+                        if (data.Trains.length === 0){
+                            alert('No predictions available for this station.');
+                        } else {
+                            // clear any current train predictions
+                            $('#train-predictions').empty()
+                            // load most current train predictions
+                            $('#train-predictions').append('<table id=train-prediction-tbl><tr><th>Destination</th><th>Line</th><th>ETA</th></tr></table>');
+                            for (let i=0; i<data.Trains.length; i++){
+                                let destination = data.Trains[i].DestinationName;
+                                let eta = data.Trains[i].Min;
+                                let line = data.Trains[i].Line;
+                                let row = `<tr><td>${destination}</td><td>${line}</td><td>${eta}</td></tr>`;
+                                $('#train-prediction-tbl').append(row);
+                            }
+                        }
                     }
                     });
-                    */
                 });
 
                 // get station parking details
