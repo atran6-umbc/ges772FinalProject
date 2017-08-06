@@ -153,10 +153,11 @@ var stations = L.geoJSON(null, {
                     $.getJSON(qryURL, function(data){
                         $('#station-query-output').empty();
                         $('#station-query-output').append(`
+                            <text class=menu-label>Origin Station: </text>${stationName}<br>
                             <text class=menu-label>Destination Station:</text>
-                            <br>
                             <select id=select-station-options>
                             </select>
+                            <br><br>
                             `);
                         // load stations for for destination option
                         for (let i=0; i< data.features.length; i++){
@@ -181,7 +182,6 @@ var stations = L.geoJSON(null, {
                                     let peakFare = data.StationToStationInfos[0].RailFare.PeakTime;
                                     let seniorDisabledFare = data.StationToStationInfos[0].RailFare.SeniorDisabled;
                                     let tripDetail = `
-                                    <br><br>
                                     <table id=trip-tbl>
                                         <tr><th>Estimated Travel Time</th><th>Distance</th><th></th></tr>
                                         <tr><td>${travelTime} Min</td><td>${distance} Miles</td><td></td><tr>
