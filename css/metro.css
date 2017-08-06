@@ -54,3 +54,139 @@ th, td {
   border-bottom: 1px solid yellow;
   background-color: #000000;
 }
+
+#entrance-btn {
+  background: #3498db;
+  background-image: -webkit-linear-gradient(top, #3498db, #2980b9);
+  background-image: -moz-linear-gradient(top, #3498db, #2980b9);
+  background-image: -ms-linear-gradient(top, #3498db, #2980b9);
+  background-image: -o-linear-gradient(top, #3498db, #2980b9);
+  background-image: linear-gradient(to bottom, #3498db, #2980b9);
+  -webkit-border-radius: 28;
+  -moz-border-radius: 28;
+  border-radius: 28px;
+  font-family: Arial;
+  color: #ffffff;
+  font-size: 12px;
+  padding: 5px 10px 5px 10px;
+  text-decoration: none;
+}
+
+#entrance-btn:hover {
+  background: #3cb0fd;
+  background-image: -webkit-linear-gradient(top, #3cb0fd, #3498db);
+  background-image: -moz-linear-gradient(top, #3cb0fd, #3498db);
+  background-image: -ms-linear-gradient(top, #3cb0fd, #3498db);
+  background-image: -o-linear-gradient(top, #3cb0fd, #3498db);
+  background-image: linear-gradient(to bottom, #3cb0fd, #3498db);
+  text-decoration: none;
+}
+
+#next-train-btn {
+  background: #f99f00;
+  background-image: -webkit-linear-gradient(top, #f99f00, #fd821a);
+  background-image: -moz-linear-gradient(top, #f99f00, #fd821a);
+  background-image: -ms-linear-gradient(top, #f99f00, #fd821a);
+  background-image: -o-linear-gradient(top, #f99f00, #fd821a);
+  background-image: linear-gradient(to bottom, #f99f00, #fd821a);
+  -webkit-border-radius: 28;
+  -moz-border-radius: 28;
+  border-radius: 28px;
+  font-family: Arial;
+  color: #ffffff;
+  font-size: 12px;
+  padding: 5px 10px 5px 10px;
+  text-decoration: none;
+}
+
+#next-train-btn:hover {
+  background: #f9b247;
+  background-image: -webkit-linear-gradient(top, #f9b247, #ea9327);
+  background-image: -moz-linear-gradient(top, #f9b247, #ea9327);
+  background-image: -ms-linear-gradient(top, #f9b247, #ea9327);
+  background-image: -o-linear-gradient(top, #f9b247, #ea9327);
+  background-image: linear-gradient(to bottom, #f9b247, #ea9327);
+  text-decoration: none;
+}
+
+#parking-details-btn {
+  background: #2a99ff;
+  background-image: -webkit-linear-gradient(top, #2a99ff, #2882ff);
+  background-image: -moz-linear-gradient(top, #2a99ff, #2882ff);
+  background-image: -ms-linear-gradient(top, #2a99ff, #2882ff);
+  background-image: -o-linear-gradient(top, #2a99ff, #2882ff);
+  background-image: linear-gradient(to bottom, #2a99ff, #2882ff);
+  -webkit-border-radius: 28;
+  -moz-border-radius: 28;
+  border-radius: 28px;
+  font-family: Arial;
+  color: #ffffff;
+  font-size: 12px;
+  padding: 5px 10px 5px 10px;
+  text-decoration: none;
+}
+
+#parking-details-btn:hover {
+  background: #79c6ff;
+  background-image: -webkit-linear-gradient(top, #79c6ff, #57b7ff);
+  background-image: -moz-linear-gradient(top, #79c6ff, #57b7ff);
+  background-image: -ms-linear-gradient(top, #79c6ff, #57b7ff);
+  background-image: -o-linear-gradient(top, #79c6ff, #57b7ff);
+  background-image: linear-gradient(to bottom, #79c6ff, #57b7ff);
+  text-decoration: none;
+}
+
+#incidents-btn {
+  background: #c92929;
+  background-image: -webkit-linear-gradient(top, #c92929, #af0000);
+  background-image: -moz-linear-gradient(top, #c92929, #af0000);
+  background-image: -ms-linear-gradient(top, #c92929, #af0000);
+  background-image: -o-linear-gradient(top, #c92929, #af0000);
+  background-image: linear-gradient(to bottom, #c92929, #af0000);
+  -webkit-border-radius: 28;
+  -moz-border-radius: 28;
+  border-radius: 28px;
+  font-family: Arial;
+  color: #ffffff;
+  font-size: 12px;
+  padding: 5px 10px 5px 10px;
+  text-decoration: none;
+
+}
+
+#incidents-btn:hover {
+  background: #ff6161;
+  background-image: -webkit-linear-gradient(top, #ff6161, #e53a3a);
+  background-image: -moz-linear-gradient(top, #ff6161, #e53a3a);
+  background-image: -ms-linear-gradient(top, #ff6161, #e53a3a);
+  background-image: -o-linear-gradient(top, #ff6161, #e53a3a);
+  background-image: linear-gradient(to bottom, #ff6161, #e53a3a);
+  text-decoration: none;
+}
+
+#trip-calc-btn {
+  background: #008000;
+  background-image: -webkit-linear-gradient(top, #008000, #007300);
+  background-image: -moz-linear-gradient(top, #008000, #007300);
+  background-image: -ms-linear-gradient(top, #008000, #007300);
+  background-image: -o-linear-gradient(top, #008000, #007300);
+  background-image: linear-gradient(to bottom, #008000, #007300);
+  -webkit-border-radius: 28;
+  -moz-border-radius: 28;
+  border-radius: 28px;
+  font-family: Arial;
+  color: #ffffff;
+  font-size: 12px;
+  padding: 5px 10px 5px 10px;
+  text-decoration: none;
+}
+
+#trip-calc-btn:hover {
+  background: #329932;
+  background-image: -webkit-linear-gradient(top, #329932, #198c19);
+  background-image: -moz-linear-gradient(top, #329932, #198c19);
+  background-image: -ms-linear-gradient(top, #329932, #198c19);
+  background-image: -o-linear-gradient(top, #329932, #198c19);
+  background-image: linear-gradient(to bottom, #329932, #198c19);
+  text-decoration: none;
+}
